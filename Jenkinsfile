@@ -25,12 +25,15 @@ pipeline{
    }
 
    stages {
-      stage('Git Checkout') {
-         steps {
-            cleanWs()
-            git credentialsId: 'GitHub', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
-         }
-      }
+        stage('Git Checkout'){
+                    when { expression {  params.action == 'create' } }
+            steps{
+            gitCheckout(
+                branch: "main",
+                url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+            )
+            }
+        }
          stage('Unit Test maven'){
          
          when { expression {  params.action == 'create' } }
