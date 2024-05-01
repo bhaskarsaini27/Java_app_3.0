@@ -13,17 +13,24 @@ pipeline{
         string(name: 'DockerHubUser', description: "name of the Application", defaultValue: 'praveensingam1994')
     }
 
-    stages{
-         
-        stage('Git Checkout'){
-                    when { expression {  params.action == 'create' } }
-            steps{
-            gitCheckout(
-                branch: "main",
-                url: "https://github.com/praveen1994dec/Java_app_3.0.git"
-            )
-            }
-        }
+   environment {
+     // You must set the following environment variables
+     // ORGANIZATION_NAME
+     // YOUR_DOCKERHUB_USERNAME (it doesn't matter if you don't have one)
+
+     SERVICE_NAME="fleetman-api-gateway"
+     ORGANIZATION_NAME="bhaskarsaini27"
+     YOUR_DOCKERHUB_USERNAME="sainibha"
+     REPOSITORY_TAG="${YOUR_DOCKERHUB_USERNAME}/${ORGANIZATION_NAME}-${SERVICE_NAME}:${BUILD_ID}"
+   }
+
+   stages {
+      stage('Git Checkout') {
+         steps {
+            cleanWs()
+            git credentialsId: 'GitHub', url: "https://github.com/${ORGANIZATION_NAME}/${SERVICE_NAME}"
+         }
+      }
          stage('Unit Test maven'){
          
          when { expression {  params.action == 'create' } }
